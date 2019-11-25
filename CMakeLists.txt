@@ -16,7 +16,7 @@ configure_file (
   "${PROJECT_SOURCE_DIR}/include/hdl_graph_slam/version.h"
 )
 
-# add_compile_options(-std=c++11)
+add_compile_options(-std=c++11)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 find_package(catkin REQUIRED COMPONENTS roscpp ndt_omp hdl_graph_slam)

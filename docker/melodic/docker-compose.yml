@@ -1,0 +1,14 @@
+version: '3'
+services:
+  hdl_graph_slam:
+    build:
+      context: ../..
+      dockerfile: ../melodic/Dockerfile
+    ports:
+      - "52698:52698"
+    volumes:
+      - ..:/root/test
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+    environment:
+      - DISPLAY
+      - "QT_X11_NO_MITSHM:1"

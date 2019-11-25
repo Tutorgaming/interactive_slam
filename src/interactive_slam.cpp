@@ -11,6 +11,7 @@
 #include <hdl_graph_slam/parameter_server.hpp>
 #include <hdl_graph_slam/version_modal.hpp>
 #include <hdl_graph_slam/graph_edit_window.hpp>
+// #include <hdl_graph_slam/file_manager_window.hpp>
 #include <hdl_graph_slam/plane_detection_window.hpp>
 #include <hdl_graph_slam/plane_alignment_modal.hpp>
 #include <hdl_graph_slam/manual_loop_close_model.hpp>
@@ -56,6 +57,8 @@ public:
     manual_loop_close_modal.reset(new ManualLoopCloseModal(graph, data_directory));
     automatic_loop_close_window.reset(new AutomaticLoopCloseWindow(graph));
     edge_refinement_window.reset(new EdgeRefinementWindow(graph));
+    // File Management window
+    // file_manager_window.reset(new FileManagerWindow());
 
     alpha = 1.0f;
 
@@ -327,6 +330,7 @@ private:
    * @param open_dialog
    */
   void open_map_data(bool open_dialog) {
+    pfd::message message("IDK", "TRY TO SHOW BOX", pfd::choice::ok);
     if(progress->run("graph load")) {
       auto result = progress->result<std::shared_ptr<InteractiveGraphView>>();
       if(result == nullptr) {
@@ -661,6 +665,7 @@ private:
   bool show_draw_config_window;
   std::unique_ptr<VersionModal> version_modal;
   std::unique_ptr<GraphEditWindow> graph_edit_window;
+  // std::unique_ptr<FileManagerWindow> file_manager_window;
   std::unique_ptr<PlaneDetectionWindow> plane_detection_window;
   std::unique_ptr<PlaneAlignmentModal> plane_alignment_modal;
   std::unique_ptr<ManualLoopCloseModal> manual_loop_close_modal;

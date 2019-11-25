@@ -10,6 +10,7 @@ services:
       - "52698:52698"
     volumes:
       - ./../../:/root/catkin_ws/src/interactive_slam:ro
+      - /dev/input:/dev/input
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
     environment:
       - "DISPLAY=$DISPLAY"

@@ -11,7 +11,7 @@ RUN /bin/bash -c '. /opt/ros/melodic/setup.bash; catkin_init_workspace'
 RUN git clone https://github.com/koide3/ndt_omp.git
 RUN git clone https://github.com/koide3/hdl_graph_slam.git
 
-# RUN git clone https://github.com/koide3/interactive_slam.git --recursive
+RUN git clone https://github.com/tutorgaming/interactive_slam.git --recursive
 COPY . /root/catkin_ws/src/interactive_slam/
 WORKDIR /root/catkin_ws/src/interactive_slam
 RUN git submodule init
@@ -21,6 +21,9 @@ RUN git submodule update
 WORKDIR /root/catkin_ws
 RUN /bin/bash -c '. /opt/ros/melodic/setup.bash; catkin_make'
 RUN sed -i "6i source \"/root/catkin_ws/devel/setup.bash\"" /ros_entrypoint.sh
+
+# Fix to work with docker melodic (when run in Ubuntu 16.04)
+RUN sed -i "7i export MESA_GL_VERSION_OVERRIDE=3.3" /ros_entrypoint.sh
 
 WORKDIR /
 

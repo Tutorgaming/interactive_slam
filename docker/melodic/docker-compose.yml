@@ -12,7 +12,7 @@ services:
       - ./../../:/root/catkin_ws/src/interactive_slam:ro
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
     environment:
-      - "DISPLAY:0"
+      - "DISPLAY=$DISPLAY"
       - "QT_X11_NO_MITSHM:1"
     entrypoint:
       - "/ros_entrypoint.sh"

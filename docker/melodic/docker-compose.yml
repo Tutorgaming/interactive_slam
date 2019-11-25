@@ -1,14 +1,20 @@
 version: '3'
 services:
   hdl_graph_slam:
+    image: hdl_graph_slam
+    container_name: hdl_graph_slam
     build:
       context: ../..
-      dockerfile: ../melodic/Dockerfile
+      dockerfile: docker/melodic/Dockerfile
     ports:
       - "52698:52698"
     volumes:
-      - ..:/root/test
+      - ./../../:/root/catkin_ws/src/interactive_slam:ro
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
     environment:
-      - DISPLAY
+      - "DISPLAY:0"
       - "QT_X11_NO_MITSHM:1"
+    entrypoint:
+      - "/ros_entrypoint.sh"
+    command:
+      - bash

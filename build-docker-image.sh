@@ -1,2 +1,2 @@
 #!/bin/bash
-sudo docker build ./docker/melodic -t hdl_graph_slam
+cd ./docker/melodic && sudo docker-compose up --build

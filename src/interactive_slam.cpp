@@ -11,7 +11,7 @@
 #include <hdl_graph_slam/parameter_server.hpp>
 #include <hdl_graph_slam/version_modal.hpp>
 #include <hdl_graph_slam/graph_edit_window.hpp>
-// #include <hdl_graph_slam/file_manager_window.hpp>
+#include <hdl_graph_slam/file_manager_window.hpp>
 #include <hdl_graph_slam/plane_detection_window.hpp>
 #include <hdl_graph_slam/plane_alignment_modal.hpp>
 #include <hdl_graph_slam/manual_loop_close_model.hpp>
@@ -58,7 +58,7 @@ public:
     automatic_loop_close_window.reset(new AutomaticLoopCloseWindow(graph));
     edge_refinement_window.reset(new EdgeRefinementWindow(graph));
     // File Management window
-    // file_manager_window.reset(new FileManagerWindow());
+    file_manager_window.reset(new FileManagerWindow());
 
     alpha = 1.0f;
 
@@ -120,6 +120,8 @@ public:
     plane_detection_window->draw_ui();
     automatic_loop_close_window->draw_ui();
     edge_refinement_window->draw_ui();
+    // File Manager Windows
+    file_manager_window->draw_ui();
 
     draw_flags_config();
     context_menu();
@@ -222,6 +224,9 @@ private:
     bool export_map_dialog = false;
     if(ImGui::BeginMenu("File")) {
       if(ImGui::BeginMenu("Open")) {
+        if(ImGui::MenuItem("Map Selection")) {
+          file_manager_window->show();
+        }
         if(ImGui::MenuItem("New map")) {
           open_map_dialog = true;
         }
@@ -330,13 +335,20 @@ private:
    * @param open_dialog
    */
   void open_map_data(bool open_dialog) {
-    pfd::message message("IDK", "TRY TO SHOW BOX", pfd::choice::ok);
+    bool no_pfd = true;
+
     if(progress->run("graph load")) {
       auto result = progress->result<std::shared_ptr<InteractiveGraphView>>();
       if(result == nullptr) {
-        pfd::message message("Error", "failed to load graph data", pfd::choice::ok);
-        while(!message.ready()) {
-          usleep(100);
+        if(no_pfd){
+            std::cerr << "ERROR -> FAILED TO LOAD GRAPH DATA" <<std::endl;
+        }
+        else
+        {
+            pfd::message message("Error", "failed to load graph data", pfd::choice::ok);
+            while(!message.ready()) {
+              usleep(100);
+            }
         }
         return;
       }
@@ -349,25 +361,41 @@ private:
     if(!open_dialog) {
       return;
     }
-    pfd::select_folder dialog("choose graph directory");
-    while(!dialog.ready()) {
-      usleep(100);
+    if(no_pfd && !file_manager_window->is_showing()){
+      std::cerr << "NO PFD MODE : Please Open File Manager Window first" << std::endl;
+      return;
     }
-
-    std::string result = dialog.result();
+    std::string result;
+    if(no_pfd){
+        result = file_manager_window->get_file_path();
+    }
+    else
+    {
+        pfd::select_folder dialog("choose graph directory");
+        while(!dialog.ready()) {
+          usleep(100);
+        }
+        result = dialog.result();
+    }
     if(result.empty()) {
       return;
     }
 
+
     clear_selections();
     if(graph->num_vertices() != 0) {
-      pfd::message dialog("Confirm", "The current map data will be closed, and unsaved data will be lost.\nDo you want to continue?");
-      while(!dialog.ready()) {
-        usleep(100);
+      if(no_pfd){
+          std::cout << "DELETING CURRENT SESSION and LOAD NEW ONE" << std::endl;
       }
-
-      if(dialog.result() != pfd::button::ok) {
-        return;
+      else
+      {
+          pfd::message dialog("Confirm", "The current map data will be closed, and unsaved data will be lost.\nDo you want to continue?");
+          while(!dialog.ready()) {
+            usleep(100);
+          }
+          if(dialog.result() != pfd::button::ok) {
+            return;
+          }
       }
     }
 
@@ -665,7 +693,7 @@ private:
   bool show_draw_config_window;
   std::unique_ptr<VersionModal> version_modal;
   std::unique_ptr<GraphEditWindow> graph_edit_window;
-  // std::unique_ptr<FileManagerWindow> file_manager_window;
+  std::unique_ptr<FileManagerWindow> file_manager_window;
   std::unique_ptr<PlaneDetectionWindow> plane_detection_window;
   std::unique_ptr<PlaneAlignmentModal> plane_alignment_modal;
   std::unique_ptr<ManualLoopCloseModal> manual_loop_close_modal;

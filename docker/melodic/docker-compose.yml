@@ -9,7 +9,8 @@ services:
     ports:
       - "52698:52698"
     volumes:
-      - ./../../:/root/catkin_ws/src/interactive_slam:ro
+      - ./../../:/root/catkin_ws/src/interactive_slam:rw
+      - /home/tutor/3D_SLAM_RESULT:/home/tutor/3D_SLAM_RESULT:ro
       - /dev/input:/dev/input
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
     environment:
